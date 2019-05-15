@@ -40,15 +40,6 @@
         - { src: inner-tunnel, dest: /etc/raddb/sites-available/inner-tunnel }
         - { src: default, dest: /etc/raddb/sites-available/default }
 
-#    - name: freeradius 
-#      copy:
-#        src: "files/{{ item.src }}"
-#        dest: "{{ item.dest }}"
-#        owner: root
-#        group: radiusd
-#        mode: 0640
-#      loop:
-
     - name: enable ldap module
       file:
         src: ../mods-available/ldap

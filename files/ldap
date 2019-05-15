@@ -3,69 +3,51 @@ ldap {
 	identity = '{{ ldap_root_user }}'
 	password = {{ ldap_root_secret }}
 	base_dn = '{{ ldap_suffix }}'
-
 {% raw %}
 	sasl {
-
 	}
-
 	update {
 		control:Password-With-Header	+= 'userPassword'
 		control:			+= 'radiusControlAttribute'
 		request:			+= 'radiusRequestAttribute'
 		reply:				+= 'radiusReplyAttribute'
 	}
-
 	user {
 		base_dn = "${..base_dn}"
 		filter = "(uid=%{%{Stripped-User-Name}:-%{User-Name}})"
-
 		sasl {
-
-
 		}
 	}
-
 	group {
 		base_dn = "${..base_dn}"
 		filter = '(objectClass=posixGroup)'
 		membership_attribute = 'memberOf'
 	}
-
 	profile {
-
 	}
-
 	client {
 		base_dn = "${..base_dn}"
 		filter = '(objectClass=radiusClient)'
-
 		template {
-
 		}
-
 		attribute {
 			ipaddr				= 'radiusClientIdentifier'
 			secret				= 'radiusClientSecret'
 		}
 	}
-
 	accounting {
 		reference = "%{tolower:type.%{Acct-Status-Type}}"
-
 		type {
 			start {
 				update {
 					description := "Online at %S"
 				}
 			}
-
 			interim-update {
 				update {
 					description := "Last seen at %S"
 				}
 			}
-
 			stop {
 				update {
 					description := "Offline at %S"
@@ -73,13 +55,11 @@ ldap {
 			}
 		}
 	}
-
 	post-auth {
 		update {
 			description := "Authenticated at %S"
 		}
 	}
-
 	options {
 		chase_referrals = yes
 		rebind = yes
@@ -91,11 +71,8 @@ ldap {
 		interval = 3
 		ldap_debug = 0x0028
 	}
-
 	tls {
-
 	}
-
 	pool {
 		start = ${thread[pool].start_servers}
 		min = ${thread[pool].min_spare_servers}

@@ -10,12 +10,10 @@ client localhost {
 		idle_timeout = 30
 	}
 }
-
 client localhost_ipv6 {
 	ipv6addr	= ::1
 	secret		= testing123
 }
-
 client openldap-network {
 	ipaddr		= {{ ldap_server_location }}/{{ ldap_server_netmask }}
 	secret		= {{ radius_client_secret }}
