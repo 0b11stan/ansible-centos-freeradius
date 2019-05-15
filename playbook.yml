@@ -1,0 +1,63 @@
+---
+- hosts: all
+  tasks:
+    # CENTOS
+    - name: all packages are up to date
+      yum:
+        name: '*'
+        state: latest
+
+    - name: initial packages are installed
+      package:
+        name: vim
+
+    - name: root have a strong password
+      user:
+        name: root
+        password: "{{ root_hash_pass }}"
+
+    - name: hostname is changed
+      hostname:
+        name: radius-srv
+
+    # FREERADIUS
+    - name: required packages are installed
+      package:
+        name:
+          - freeradius
+          - freeradius-ldap
+
+    - name: freeradius configuration is copied
+      template:
+        src: "files/{{ item.src }}"
+        dest: "{{ item.dest }}"
+        owner: root
+        group: radiusd
+        mode: 0640
+      loop:
+        - { src: ldap, dest: /etc/raddb/mods-available/ldap }
+        - { src: clients, dest: /etc/raddb/clients.conf }
+        - { src: inner-tunnel, dest: /etc/raddb/sites-available/inner-tunnel }
+        - { src: default, dest: /etc/raddb/sites-available/default }
+
+#    - name: freeradius 
+#      copy:
+#        src: "files/{{ item.src }}"
+#        dest: "{{ item.dest }}"
+#        owner: root
+#        group: radiusd
+#        mode: 0640
+#      loop:
+
+    - name: enable ldap module
+      file:
+        src: ../mods-available/ldap
+        dest: /etc/raddb/mods-enabled/ldap
+        state: link
+        owner: root
+        group: radiusd
+
+# ipatables
+# iptables -A INPUT -p udp --dport 1812 -j ACCEPT
+# iptables -A INPUT -p udp --dport 1813 -j ACCEPT
+# verify iptables -L -n | grep 181
